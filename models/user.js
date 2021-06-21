@@ -1,5 +1,5 @@
 'use strict';
-const passportLocalSequelize = require('passport-local-sequelize');
+// const passportLocalSequelize = require('passport-local-sequelize');
 
 const {
   Model
@@ -27,11 +27,11 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'User',
   });
 
-  passportLocalSequelize.attachToUser(User, {
-    usernameField: 'email',
-    hashField: 'password',
-    saltField: 'salt'
-  });
+  // passportLocalSequelize.attachToUser(User, {
+  //   usernameField: 'email',
+  //   hashField: 'password',
+  //   saltField: 'salt'
+  // });
 
   return User;
 };
