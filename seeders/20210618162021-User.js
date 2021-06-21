@@ -1,19 +1,21 @@
 'use strict';
 
-const crypto = require('crypto');
+const bcrypt = require('bcrypt');
 
 module.exports = {
   up: async function(queryInterface, Sequelize) { 
     
     var user_list = [
       {
-        name: 'Alice Anderson',
+        first_name: 'Alice',
+        last_name: 'Anderson',
         email: 'alice@example.com',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        name: 'Bob Bradley',
+        first_name: 'Bob',
+        last_name: 'Bradley',
         email: 'bob@example.com',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -22,16 +24,11 @@ module.exports = {
 
     var users = [];
 
-    user_list.forEach(function (item) {
-      var clear_password = '12345678';
-      var salt = crypto.randomBytes(64).toString('hex');
-      var password = crypto.pbkdf2Sync(clear_password, salt, 10000, 64, 'sha512').toString('base64');
-
-      item.password = password;
-      item.salt = salt;
-      console.log(item)
+    user_list.forEach(async function (item) {
+      item.password = bcrypt.hashSync('12345678', 5);
       users.push(item)
     });
+    console.log(users)
 
     queryInterface.bulkInsert('Users', users, {});
   },

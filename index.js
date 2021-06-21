@@ -3,15 +3,9 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const session = require('express-session')
-
-// Fake User
-const user = {
-  id: '123456',
-  name: 'Edoardo',
-  surname: 'Gallo',
-  username: 'edoardo',
-}
+const session = require('express-session');
+const db = require('./models');
+const bcrypt = require('bcrypt');
 
 const PORT = process.env.PORT || 5000
 const app = express();
@@ -27,48 +21,37 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// const db = require('./models');
-// db.sequelize.sync();
+db.sequelize.sync();
 
 passport.use(new LocalStrategy(
   { usernameField: 'email',
     passwordField: 'password',
   },
-  function(username, password, done) {
+  async function(username, password, done) {
     console.log('LocalStrategy', username, password)
-    // User.findOne({ username: username }, function (err, user) {
-    //   if (err) { return done(err); }
-    //   if (!user) { return done(null, false); }
-    //   if (!user.verifyPassword(password)) { return done(null, false); }
-    //   return done(null, user);
-    // });
-    // TODO: Replace with query above
-    if (username === user.username) {
-      return done(null, user);
-    }
-
-    const error = new Error('Invalid Username')
-    return done(error);
+    var user = await db.User.findOne({ where: {email: username }})
+    if (!user) { return done(null, false); }
+    bcrypt.compare(password, user.password, function(err, result) {
+      if (result == true) {
+        return done(null, user);
+      } else {
+        return done(null, false);
+      }
+    });
   }
 ));
 
 passport.serializeUser(function(user, done) {
-  console.log('serializeUser', user)
   done(null, user.id);
 });
 
-passport.deserializeUser(function(id, done) {
-  console.log('deserializeUser', id)
-  // User.findById(id, function (err, user) {
-  //   done(err, user);
-  // });
-  // TODO: Replace with query above
-  if (id === '123456') {
-    console.log('Found User!', user)
-    done(null, user);
-  } else {
+passport.deserializeUser(async function(id, done) {
+  const user = await db.User.findByPk(id);
+  if (user === null) {
     const error = new Error('Invalid userId')
     done(error);
+  } else {
+    done(null, user);
   }
 });
 
@@ -83,8 +66,8 @@ app.use(passport.session());
 
 app.set('view engine', 'ejs');
 
-app.get('/', (req, res) => {
-  res.send('index');
+app.get('/', async (req, res) => {
+  res.send('home');
 });
 
 function isLoggedIn(req, res, next) {
@@ -99,8 +82,17 @@ app.get('/dashboard', isLoggedIn, function(req, res) {
   res.render('dashboard');
 });
 
+app.get('/otherpage', isLoggedIn, function(req, res) {
+  res.send('otherpage');
+});
+
 app.get('/login', (req, res) => {
   res.render('login');
+});
+
+app.get('/logout', function(req, res) {
+  req.logout();
+  res.redirect('/');
 });
 
 app.post('/login', passport.authenticate('local', { failureRedirect: '/login', successRedirect: '/dashboard' }));
