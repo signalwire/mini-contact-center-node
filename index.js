@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
+require('dotenv').config()
 const db = require('./models');
 const bcrypt = require('bcrypt');
 
@@ -64,12 +65,13 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+//layouts and views
 app.set('view engine', 'ejs');
+var expressLayouts = require('express-ejs-layouts');
+app.use(expressLayouts);
 
-app.get('/', async (req, res) => {
-  res.send('home');
-});
 
+// login/logout logic
 function isLoggedIn(req, res, next) {
   if (req.user) {
     next();
@@ -78,6 +80,18 @@ function isLoggedIn(req, res, next) {
   }
 }
 
+app.post('/login', passport.authenticate('local', { failureRedirect: '/login', successRedirect: '/dashboard' }));
+
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
+
+//application routes
+app.get('/', async (req, res) => {
+  res.render('index');
+});
+
 app.get('/dashboard', isLoggedIn, function(req, res) {
   res.render('dashboard');
 });
@@ -85,17 +99,6 @@ app.get('/dashboard', isLoggedIn, function(req, res) {
 app.get('/otherpage', isLoggedIn, function(req, res) {
   res.send('otherpage');
 });
-
-app.get('/login', (req, res) => {
-  res.render('login');
-});
-
-app.get('/logout', function(req, res) {
-  req.logout();
-  res.redirect('/');
-});
-
-app.post('/login', passport.authenticate('local', { failureRedirect: '/login', successRedirect: '/dashboard' }));
 
 http.listen(PORT, '0.0.0.0', () => {
   console.log(`Listening to ${PORT}`);
