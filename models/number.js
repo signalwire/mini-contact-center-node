@@ -16,8 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   Number.init({
     phone_number: DataTypes.STRING,
     name: DataTypes.STRING,
-    sid: DataTypes.STRING,
-    created_at: DataTypes.DATE
+    sid: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Number',

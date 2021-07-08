@@ -1,0 +1,35 @@
+<h1>Users</h1>
+
+<div>
+  <a href="/users/new" class="btn btn-primary">New user</a>
+</div>
+<div>
+  <% if (users && users.length > 0) { %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>Email</th>
+        <th>Personal number</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for ( const user of users ) { %>
+        <tr>
+          <td><%= user.first_name %></td>
+          <td><%= user.last_name %></td>
+          <td><%= user.email %></td>
+          <td><%= user.personal_number %></td>
+          <td><a href="/users/<%= user.id %>">Details</a></td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+  <% } else { %>
+    <div>
+      No users present. <a href="/users/new">Create a user</a>
+    </div>
+  <% } %>
+</div>

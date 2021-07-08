@@ -1,0 +1,20 @@
+<div>
+  <% if (errors && errors.length > 0) { %>
+    <% for ( const error of errors ) { %>
+      <p class="text-danger"><%= error.msg %></p>
+    <% } %>
+  <% } %>
+</div>
+<form action="<%= action %>" method="POST">
+  <label for="first_name" class="form-label">First name</label>
+  <input type="text" name="first_name"  id="first_name" value="<%= user.first_name %>" class="form-control">
+  <label for="last_name" class="form-label">Last name</label>
+  <input type="text" name="last_name" id="last_name" value="<%= user.last_name %>" class="form-control">
+  <label for="email" class="form-label">Email</label>
+  <input type="text" name="email" id="email" value="<%= user.email %>" class="form-control">
+  <label for="personal_number" class="form-label">Phone number</label>
+  <input type="text" name="personal_number" id="personal_number" value="<%= user.personal_number %>" class="form-control">
+  <label for="password" class="form-label">Password</label>
+  <input type="password" name="password" id="password" class="form-control">
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>

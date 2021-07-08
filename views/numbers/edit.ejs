@@ -1,0 +1,25 @@
+<div>
+  <% if (errors && errors.length > 0) { %>
+    <% for ( const error of errors ) { %>
+      <p class="text-danger"><%= error.msg %></p>
+    <% } %>
+  <% } %>
+</div>
+<dl>
+  <dt>Phone number</dt>
+  <dd><%= number.phone_number %></dd>
+
+  <dt>SignalWire ID</dt>
+  <dd><%= number.sid %></dd>
+</dl>
+<form action="/numbers/<%= number.id %>" method="POST">
+  <label for="user_id" class="form-label">Assigned Number</label>
+  <select name="user_id" id="user_id" class="form-control">
+    <% for ( const user of users ) { 
+      var is_selected = ( user.id == number.UserId ) ? "selected" : "";
+    %>
+      <option value="<%= user.id %>" <%=is_selected %>><%= user.first_name %> <%= user.last_name %> (<%= user.personal_number %>)</option>
+    <% } %>
+  </select>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>

@@ -1,5 +1,11 @@
-<form action="/login" method="POST">
-  <input type="text" name="email">
-  <input type="password" name="password">
-  <input type="submit" value="Sign in">
-</form>
+<div class="row">
+  <div class="col-md-4 offset-md-4">
+    <form action="/login" method="POST">
+      <label for="email" class="form-label">Email address:</label>
+      <input type="text" name="email" class="form-control">
+      <label for="password" class="form-label">Password:</label>
+      <input type="password" name="password" class="form-control">
+      <input type="submit" value="Sign in" class="btn btn-primary">
+    </form>
+  </div>
+</div>

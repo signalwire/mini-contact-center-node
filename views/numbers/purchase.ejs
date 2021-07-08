@@ -1,0 +1,41 @@
+<div>
+  <form method="GET">
+    <select class="form-control" name="state">
+      <%
+        for ( var i = 0; i < states.length; i++ )
+        {
+          var is_selected = ( states[i].abbreviation == selected ) ? "selected" : "";
+          %><option value="<%=states[i].abbreviation %>" <%=is_selected %>><%=states[i].name %></option><%
+        }
+        %>
+    </select>
+    <button type="submit" class="btn btn-primary">Search</button>
+  </form>
+</div>
+
+<div>
+  <% if (numbers && numbers.length > 0) { %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Number</th>
+        <th>City</th>
+        <th>State</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for ( const number of numbers ) { %>
+        <tr>
+          <td><%= number.e164 %></td>
+          <td><%= number.rate_center %></td>
+          <td><%= number.region %></td>
+          <td><a href="/numbers/buy?number=<%= number.e164.replace('+', '%2b') %>">Purchase</a></td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+  <% } else { %>
+    <%= selected ? 'No numbers' : 'Select a state' %>
+  <% } %>
+</div>

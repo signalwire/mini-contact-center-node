@@ -1,0 +1,17 @@
+<dl>
+  <dt>Phone number</dt>
+  <dd><%= number.phone_number %></dd>
+
+  <dt>SignalWire ID</dt>
+  <dd><%= number.sid %></dd>
+  
+  <dt>Assigned to:</dt>
+  <% if (number.User) { %>
+    <dd><%= number.User.first_name %> <%= number.User.last_name %> (<%= number.User.personal_number %>)</dd>
+  <% } else { %>
+    <dd>Unassigned</dd>
+  <% } %>
+</dl>
+<div>
+  <a href="/numbers/<%= number.id %>/edit" class="btn btn-primary">Edit</a>
+</div>

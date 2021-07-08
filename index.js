@@ -6,6 +6,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
 require('dotenv').config()
 const db = require('./models');
+const utility = require('./lib/utility');
 const bcrypt = require('bcrypt');
 
 const PORT = process.env.PORT || 5000
@@ -29,7 +30,6 @@ passport.use(new LocalStrategy(
     passwordField: 'password',
   },
   async function(username, password, done) {
-    console.log('LocalStrategy', username, password)
     var user = await db.User.findOne({ where: {email: username }})
     if (!user) { return done(null, false); }
     bcrypt.compare(password, user.password, function(err, result) {
@@ -70,15 +70,9 @@ app.set('view engine', 'ejs');
 var expressLayouts = require('express-ejs-layouts');
 app.use(expressLayouts);
 
-
-// login/logout logic
-function isLoggedIn(req, res, next) {
-  if (req.user) {
-    next();
-  } else {
-    res.redirect('/login');
-  }
-}
+app.get('/login', async (req, res) => {
+  res.render('login');
+});
 
 app.post('/login', passport.authenticate('local', { failureRedirect: '/login', successRedirect: '/dashboard' }));
 
@@ -88,16 +82,19 @@ app.get('/logout', function(req, res){
 });
 
 //application routes
+const numbers = require('./routes/numbers');
+app.use('/numbers', numbers)
+const users = require('./routes/users');
+app.use('/users', users)
+const inbound = require('./routes/inbound');
+app.use('/inbound', inbound)
+
 app.get('/', async (req, res) => {
   res.render('index');
 });
 
-app.get('/dashboard', isLoggedIn, function(req, res) {
+app.get('/dashboard', utility.isLoggedIn, function(req, res) {
   res.render('dashboard');
-});
-
-app.get('/otherpage', isLoggedIn, function(req, res) {
-  res.send('otherpage');
 });
 
 http.listen(PORT, '0.0.0.0', () => {
